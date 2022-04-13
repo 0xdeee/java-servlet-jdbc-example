@@ -1,0 +1,64 @@
+// how to manage servlet routes
+
+
+private void processAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	String action =request.getServletPath();
+	switch(action) {
+	
+	case "/":
+	    request.getRequestDispatcher("/WEB-INF/views/Signuppage.jsp").forward(request,response);
+	    break;
+	case "/signup":
+	if("GET".equals(request.getMethod())){
+	    request.getRequestDispatcher("/WEB-INF/views/Signuppage.jsp").forward(request,response);
+	}else if("POST".equals(request.getMethod())) {
+	    try {
+		signupNewUser(request, response);
+	    } catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	}
+	break;
+	
+	
+	case "/login":
+	if("GET".equals(request.getMethod())){
+	    request.getRequestDispatcher("/WEB-INF/views/loginpage.jsp").forward(request,response);
+	}else if("POST".equals(request.getMethod())) {
+	   try {
+	    verifyUserandLogin(request, response);
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	}
+	break;
+	
+	case "/addcontacts":
+	    if("POST".equals(request.getMethod())) {
+		   try {
+		    addcontacts(request, response);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+		}
+		break;
+	
+	case "/deletecontact":
+	    if("POST".equals(request.getMethod())) {
+		   try {
+		    deletecontact(request, response);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+		}
+		break;
+	 default:
+	    request.getRequestDispatcher("/WEB-INF/views/Signuppage.jsp").forward(request,response);
+	    break;
+	
+    }
+    }

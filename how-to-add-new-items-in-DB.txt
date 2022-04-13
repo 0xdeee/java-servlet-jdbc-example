@@ -1,0 +1,162 @@
+// servlet code for signup example
+
+ private void signupNewUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+	String email= request.getParameter("email");
+	String mobile=request.getParameter("mob");
+	String password= request.getParameter("psw");
+	System.out.println(email + "  " + mobile + "  " + password );
+	String INSERT_QUERY="INSERT INTO application_table VALUES(?, ?,?)";
+	Connection connection=DatabaseConnector.initiateDbConnection();
+	PreparedStatement ps= connection.prepareStatement(INSERT_QUERY);
+	ps.setString(1, email);
+	ps.setString(2, mobile);
+	ps.setString(3, password);
+	ps.executeUpdate();
+	    try {
+		request.getRequestDispatcher("/WEB-INF/views/loginpage.jsp").forward(request,response);
+	    } catch (ServletException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	    
+	
+}
+
+
+// jsp code for signup
+
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>New Signup</title>
+</head>
+<body>
+<form action="/signup" method ="post" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Sign Up</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" required><br>
+    
+     <label for="mob"><b>Mobile</b></label>
+    <input type="text" placeholder="Enter Mobile" name="mob" required><br>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required><br>
+
+
+    <div class="clearfix">
+     
+      <input type="submit" value="Signup"></input><br>
+      
+      <a href="/login">Already a member, click to login</a>
+      
+      
+    </div>
+  </div>
+</form>
+</body>
+</html>
+
+
+// servlet to add new contact
+
+private void addcontacts(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+	String name = request.getParameter("ucname");
+	String email = request.getParameter("ucemail");;
+	String mobileno = request.getParameter("ucmob");;
+	String owner = request.getQueryString().substring(2);
+	
+	String INSERT_QUERY="INSERT INTO contacts_table VALUES(DEFAULT,?, ?,?,?)";
+	Connection connection=DatabaseConnector.initiateDbConnection();
+	PreparedStatement ps= connection.prepareStatement(INSERT_QUERY);
+	ps.setString(1, email);
+	ps.setString(2, mobileno);
+	ps.setString(3, name);
+	ps.setString(4, owner);
+	ps.executeUpdate();
+	
+	request.setAttribute("email", owner);
+	try {
+	    displayContactPage(request,response);
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (ServletException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+}
+
+
+// jsp to add new contact
+
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Display Contacts</title>
+</head>
+<body>
+<div class="container">
+
+Hello ${email}
+<form action="/addcontacts?o=${email} " method="post">
+    <label for="ucname"><b>Contact Name</b></label>
+    <input type="text" placeholder="Enter Username" name="ucname" required><br>
+
+    <label for="ucemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Password" name="ucemail" required><br>
+    
+       <label for="ucmob"><b>Mobile no</b></label>
+    <input type="text" placeholder="Enter Password" name="ucmob" required><br>
+
+    <input type="submit" value="Add Contact"></input><br>
+    
+    </form>
+    
+    
+ 
+<table>
+  <thead>
+ 
+    <tr>
+      <th>Contact Name</th>
+      <th>Email</th>
+      <th>Mobile no</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+     <c:forEach var="contact" items="${contactslist}">
+     <tr>
+    <td><c:out value="${contact.getContactName()}"/> </td>
+    <td><c:out value="${contact.getContactEmail()}"/> </td>
+    <td><c:out value="${contact.getContactMobile()}"/> </td>
+     <form action="/deletecontact?id=<c:out value='${contact.id}'/>&o=${email}" method="post"> 
+     <td><input type="submit" value="Deletecontact" ></td>
+    </form> 
+    </tr>  
+</c:forEach>
+
+
+</table>
+<a href="/login">Logout</a><br>
+</body>
+</html>	

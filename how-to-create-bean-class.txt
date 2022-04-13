@@ -1,0 +1,45 @@
+package webapp;
+
+public class ContactsBean {
+
+public String contactName;
+public String contactEmail;
+public String contactMobile;
+public int id;
+public ContactsBean(String contactName, String contactEmail, String contactMobile, int id) {
+    
+    this.contactName = contactName;
+    this.contactEmail = contactEmail;
+    this.contactMobile = contactMobile;
+    this.id = id;
+}
+
+// need getters() & setter() to fetch data in the JSP layer.
+
+public String getContactName() {
+    return contactName;
+}
+public void setContactName(String contactName) {
+    this.contactName = contactName;
+}
+public String getContactEmail() {
+    return contactEmail;
+}
+public void setContactEmail(String contactEmail) {
+    this.contactEmail = contactEmail;
+}
+public String getContactMobile() {
+    return contactMobile;
+}
+public void setContactMobile(String contactMobile) {
+    this.contactMobile = contactMobile;
+}
+public int getId() {
+    return id;
+}
+public void setId(int id) {
+    this.id = id;
+}
+
+
+}

@@ -1,0 +1,97 @@
+// servlet to get all contact
+
+
+private void displayContactPage(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+	
+		String useremail;
+
+		useremail=request.getParameter("email")	;
+
+		if(useremail==""||useremail==null) {
+			useremail=(String) request.getAttribute("email");
+		}
+
+		request.setAttribute("email", useremail);
+
+		Connection connection=DatabaseConnector.initiateDbConnection();
+		String QUERY = "SELECT id,email,mobileno,name from contacts_table WHERE owner= ?";
+		PreparedStatement ps=connection.prepareStatement(QUERY);
+		ps.setString(1, useremail);
+		ResultSet rs = ps.executeQuery();
+		ArrayList<ContactsBean>contacts=new ArrayList<>();
+		   while (rs.next()){
+			  
+			  int id=rs.getInt("id");
+			  String email=rs.getString("email");
+			  String mobileno=rs.getString("mobileno");
+			  String name=rs.getString("name");
+			  ContactsBean con=new ContactsBean(name,email,mobileno,id);
+			  contacts.add(con);
+		   }
+		request.setAttribute("contactslist", contacts);
+		request.getRequestDispatcher("/WEB-INF/views/displayandaddcontacts.jsp").forward(request, response);
+			}
+
+}
+
+
+// jsp to display fetched Data
+
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Display Contacts</title>
+</head>
+<body>
+<div class="container">
+
+Hello ${email}
+<form action="/addcontacts?o=${email} " method="post">
+    <label for="ucname"><b>Contact Name</b></label>
+    <input type="text" placeholder="Enter Username" name="ucname" required><br>
+
+    <label for="ucemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Password" name="ucemail" required><br>
+    
+       <label for="ucmob"><b>Mobile no</b></label>
+    <input type="text" placeholder="Enter Password" name="ucmob" required><br>
+
+    <input type="submit" value="Add Contact"></input><br>
+    
+    </form>
+    
+    
+ 
+<table>
+  <thead>
+ 
+    <tr>
+      <th>Contact Name</th>
+      <th>Email</th>
+      <th>Mobile no</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+     <c:forEach var="contact" items="${contactslist}">
+     <tr>
+    <td><c:out value="${contact.getContactName()}"/> </td>
+    <td><c:out value="${contact.getContactEmail()}"/> </td>
+    <td><c:out value="${contact.getContactMobile()}"/> </td>
+     <form action="/deletecontact?id=<c:out value='${contact.id}'/>&o=${email}" method="post"> 
+     <td><input type="submit" value="Deletecontact" ></td>
+    </form> 
+    </tr>  
+</c:forEach>
+
+
+</table>
+<a href="/login">Logout</a><br>
+</body>
+</html>	
+			

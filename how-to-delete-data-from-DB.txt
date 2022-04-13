@@ -1,0 +1,28 @@
+// servlet to delete data from DB
+
+
+private void deletecontact(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+			String temp=request.getQueryString();
+			int ind=0;
+			for(int i=0;i<temp.length();i++) {
+				if(temp.charAt(i)=='&') {
+				ind=i;
+				break;
+				}
+			}
+			String id=temp.substring(3, ind);
+			String owner=temp.substring(ind+3);
+				String query = "delete from contacts_table where id = ?";
+				Connection con=DatabaseConnector.initiateDbConnection();
+				PreparedStatement ps=con.prepareStatement(query);
+				ps.setString(1, id);
+				ps.executeUpdate();
+				
+				request.setAttribute("email", owner);
+				try {
+				displayContactPage(request,response);
+			} catch (SQLException | ServletException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+} 
